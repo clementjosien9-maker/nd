@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soirée Speakeasy - Accès Réservé</title>
+    
+    <!-- Tailwind CSS (Design) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Polices d'écriture -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icônes -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Styles personnalisés */
+        body {
+            font-family: 'Playfair Display', serif;
+            background-color: #0a0a0a;
+            color: #fffbeb;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, button, .cinzel {
+            font-family: 'Cinzel', serif;
+        }
+        
+        /* Animation de secousse pour l'erreur */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .animate-shake {
+            animation: shake 0.3s ease-in-out;
+        }
+
+        /* Transitions douces */
+        .fade-enter {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .fade-enter-active {
+            opacity: 1;
+        }
+        
+        .bg-pattern {
+            background-image: radial-gradient(circle at 50% 50%, #d4af37 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        
+        .gold-stripe {
+            background-image: repeating-linear-gradient(45deg, #d4af37 0, #d4af37 1px, transparent 0, transparent 50%);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative">
+
+    <!-- FOND GÉNÉRAL -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black to-transparent z-10"></div>
+        <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-10"></div>
+        <div class="absolute inset-0 opacity-5 bg-pattern"></div>
+    </div>
+
+    <!-- ÉCRAN 1 : LE GARDIEN (Visible par défaut) -->
+    <div id="gatekeeper" class="flex-grow flex flex-col items-center justify-center p-4 z-20 transition-opacity duration-500">
+        <div id="login-card" class="max-w-md w-full bg-black/80 p-8 border border-amber-900/50 backdrop-blur-sm relative shadow-2xl">
+            <!-- Coin décoratif -->
+            <div class="absolute top-2 left-2 right-2 h-px bg-gradient-to-r from-transparent via-amber-600 to-transparent"></div>
+            
+            <div class="text-center mb-8">
+                <div class="mb-4 flex justify-center text-amber-500">
+                    <i data-lucide="key" width="48" height="48"></i>
+                </div>
+                <h1 class="text-3xl text-amber-500 mb-2 tracking-widest uppercase">L'Entrée</h1>
+                <p class="text-neutral-400 italic text-sm">Une bibliothèque bloque le chemin. Un garde vous observe.</p>
+            </div>
+
+            <form id="login-form" class="space-y-6" onsubmit="handleLogin(event)">
+                <div class="relative group">
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Mot de passe..."
+                        class="w-full bg-neutral-900 border-b-2 border-amber-800 text-amber-100 px-4 py-3 focus:outline-none focus:border-amber-500 transition-colors text-center text-xl tracking-widest placeholder-neutral-700"
+                    />
+                </div>
+
+                <button 
+                    type="submit"
+                    class="w-full bg-gradient-to-r from-amber-700 to-amber-600 text-black font-bold py-3 px-6 hover:from-amber-600 hover:to-amber-500 transition-all duration-300 tracking-widest uppercase cinzel shadow-[0_0_15px_rgba(217,119,6,0.3)] hover:shadow-[0_0_25px_rgba(217,119,6,0.5)] cursor-pointer"
+                >
+                    Chuchoter au Garde
+                </button>
+            </form>
+            
+            <p id="error-msg" class="text-red-400 text-center mt-4 text-sm hidden">
+                Le garde secoue la tête. Ce n'est pas le bon code.
+            </p>
+        </div>
+    </div>
+
+    <!-- ÉCRAN 2 : L'INVITATION (Caché par défaut) -->
+    <div id="invitation" class="hidden min-h-screen w-full z-20 fade-enter">
+        <div class="max-w-3xl mx-auto px-6 py-12 relative">
+            
+            <!-- Header -->
+            <header class="text-center mb-16 relative">
+                <div class="inline-block relative">
+                    <h1 class="text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700 tracking-wider mb-2 drop-shadow-lg font-bold">
+                        LE SPEAKEASY
+                    </h1>
+                    <div class="h-1 w-full bg-gradient-to-r from-transparent via-amber-500 to-transparent mb-1"></div>
+                    <div class="h-px w-3/4 mx-auto bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
+                </div>
+                <p class="mt-4 text-amber-200/80 tracking-[0.2em] uppercase text-sm">Une soirée clandestine</p>
+            </header>
+
+            <!-- Main Content Card avec Bordure Art Déco -->
+            <div class="relative p-8 border-2 border-amber-500/30 bg-black/60 backdrop-blur-md mb-16">
+                <!-- Coins Art Déco -->
+                <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-amber-400"></div>
+                <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-amber-400"></div>
+                <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-amber-400"></div>
+                <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-amber-400"></div>
+                
+                <!-- Losanges Déco -->
+                <div class="absolute top-1/2 left-0 -translate-x-1/2 w-2 h-2 bg-amber-400 rotate-45"></div>
+                <div class="absolute top-1/2 right-0 translate-x-1/2 w-2 h-2 bg-amber-400 rotate-45"></div>
+                <div class="absolute top-0 left-1/2 -translate-y-1/2 w-2 h-2 bg-amber-400 rotate-45"></div>
+                <div class="absolute bottom-0 left-1/2 translate-y-1/2 w-2 h-2 bg-amber-400 rotate-45"></div>
+
+                <div class="text-center space-y-6">
+                    <div class="flex justify-center mb-6">
+                        <i data-lucide="star" class="text-amber-400 w-8 h-8 animate-pulse"></i>
+                    </div>
+                    
+                    <h2 class="text-2xl text-amber-200">Invitation Confidentielle</h2>
+                    
+                    <p class="text-lg leading-relaxed text-amber-50/90 italic">
+                        "Si j’étais une lueur vacillante au bout d’un couloir secret, je te guiderais vers la porte d’un refuge que seuls les plus audacieux oseront franchir."
+                    </p>
+                    
+                    <div class="w-8 h-8 border-t border-r border-amber-500 mx-auto rotate-45 transform my-8 opacity-50"></div>
+
+                    <p class="leading-relaxed text-neutral-300">
+                        Mon cher ami, ma chère amie, cette lueur t’invite à pénétrer dans notre monde, où le murmure des conversations se mêle aux accords de jazz et où les cocktails les plus raffinés éveillent les sens.
+                    </p>
+                    
+                    <p className="leading-relaxed text-neutral-300">
+                        Tu as franchi la porte, tu as prononcé le code. Bienvenue parmi les initiés.
+                        Prépare-toi à danser sous les éclats des lampes et immerge-toi dans une nuit où chaque sourire, chaque éclat de cristal et chaque verre de liqueur murmure l’esprit des années folles.
+                    </p>
+
+                    <p class="text-amber-400 font-bold mt-4">
+                        "Nous comptons sur ta discrétion."
+                    </p>
+                </div>
+            </div>
+
+            <!-- Details Grid -->
+            <div class="grid md:grid-cols-2 gap-8 mb-16">
+                <!-- Menu -->
+                <div class="bg-neutral-900/50 p-6 border border-amber-900/30 hover:border-amber-500/50 transition-colors duration-500">
+                    <div class="flex items-center justify-center mb-4 text-amber-500">
+                        <i data-lucide="glass-water" width="32" height="32"></i>
+                    </div>
+                    <h3 class="text-center text-xl mb-6 text-amber-200 border-b border-amber-800 pb-2">Carte des Boissons</h3>
+                    <ul class="space-y-4 text-center">
+                        <li class="flex flex-col items-center">
+                            <span class="font-bold text-amber-400 tracking-wide">Daisy's Dream</span>
+                            <span class="text-xs text-neutral-400 italic">Arômes délicats & mystère</span>
+                        </li>
+                        <li class="flex flex-col items-center">
+                            <span class="font-bold text-amber-400 tracking-wide">Gatsby Gold</span>
+                            <span class="text-xs text-neutral-400 italic">Festif, pétillant, opulent</span>
+                        </li>
+                        <li class="flex flex-col items-center">
+                            <span class="font-bold text-amber-400 tracking-wide">Prohibition Punch</span>
+                            <span class="text-xs text-neutral-400 italic">Servi en bocal clandestin</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Dress Code & Music -->
+                <div class="space-y-8">
+                    <div class="bg-neutral-900/50 p-6 border border-amber-900/30 hover:border-amber-500/50 transition-colors duration-500">
+                        <div class="flex items-center justify-center mb-4 text-amber-500">
+                            <i data-lucide="feather" width="32" height="32"></i>
+                        </div>
+                        <h3 class="text-center text-xl mb-4 text-amber-200 border-b border-amber-800 pb-2">Dress Code</h3>
+                        <p class="text-center text-sm leading-relaxed text-neutral-300 mb-3">
+                            <span class="text-amber-400 block mb-1 font-bold">Pour Elles</span>
+                            Robes à franges, bandeaux à plumes, perles & touches dorées.
+                        </p>
+                        <div class="h-px w-12 bg-amber-800 mx-auto my-3"></div>
+                        <p class="text-center text-sm leading-relaxed text-neutral-300">
+                            <span class="text-amber-400 block mb-1 font-bold">Pour Eux</span>
+                            Chemises blanches, bretelles, nœuds papillon, allure dandy.
+                        </p>
+                    </div>
+
+                    <div class="bg-neutral-900/50 p-6 border border-amber-900/30 flex items-center gap-4">
+                        <div class="bg-amber-900/20 p-3 rounded-full">
+                            <i data-lucide="music" class="text-amber-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-amber-200">Ambiance Sonore</h4>
+                            <p class="text-xs text-neutral-400">Jazz Classique & Electro-Swing</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center space-y-2 py-8 border-t border-amber-900/30 relative">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black px-4">
+                     <div class="w-2 h-2 bg-amber-500 rotate-45"></div>
+                </div>
+                
+                <div class="flex justify-center items-center gap-4 text-amber-400 mb-6">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="clock" width="16"></i>
+                        <span class="tracking-widest uppercase text-sm">22h00 - L'Aube</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="map-pin" width="16"></i>
+                        <span class="tracking-widest uppercase text-sm">Le Lieu Secret</span>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <a href="mailto:ton-email@ecole.com?subject=Confirmation Présence Speakeasy" class="inline-block bg-transparent border border-amber-500 text-amber-500 px-8 py-3 cinzel hover:bg-amber-500 hover:text-black transition-all duration-300 text-sm tracking-[0.2em] uppercase">
+                        Confirmer sa présence
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Initialisation des icônes
+        lucide.createIcons();
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const passwordInput = document.getElementById('password');
+            const errorMsg = document.getElementById('error-msg');
+            const loginCard = document.getElementById('login-card');
+            const gatekeeper = document.getElementById('gatekeeper');
+            const invitation = document.getElementById('invitation');
+
+            // Vérification du mot de passe
+            if (passwordInput.value.toLowerCase().trim() === 'green light') {
+                // Succès
+                errorMsg.classList.add('hidden');
+                
+                // Animation de sortie du gardien
+                gatekeeper.style.opacity = '0';
+                
+                setTimeout(() => {
+                    gatekeeper.classList.add('hidden');
+                    invitation.classList.remove('hidden');
+                    // Petit délai pour permettre au display:block de s'appliquer avant l'opacité
+                    setTimeout(() => {
+                        invitation.classList.add('fade-enter-active');
+                    }, 50);
+                }, 500);
+
+            } else {
+                // Erreur
+                errorMsg.classList.remove('hidden');
+                loginCard.classList.add('animate-shake');
+                
+                // Retirer l'animation après qu'elle ait joué pour pouvoir la rejouer
+                setTimeout(() => {
+                    loginCard.classList.remove('animate-shake');
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>
